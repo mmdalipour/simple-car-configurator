@@ -6,20 +6,28 @@ import propTypes from "prop-types";
 // loaders
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-const Model = ({ url, ...rest }) => {
+const Model = ({ url, center, onLoad, ...rest }) => {
   const [model, setModel] = useState();
+  const [centerPosition, setCenterPosition] = useState();
 
   useEffect(() => {
     new GLTFLoader().load(url, model => {
-      model.scene.traverse(node => {
+      const scene = model.scene;
+      center && setCenterPosition(scene.children[0].position);
+      scene.traverse(node => {
         node.castShadow = true;
       });
-      setModel(model);
+      setModel(scene);
+      onLoad && onLoad(scene);
     });
   }, []);
 
   return model ? (
-    <primitive object={model.scene} position={[0, 0, 0]} {...rest} />
+    <primitive
+      object={model}
+      position={centerPosition ? centerPosition : [0, 0, 0]}
+      {...rest}
+    />
   ) : null;
 };
 
