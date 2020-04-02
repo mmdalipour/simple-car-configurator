@@ -1,36 +1,31 @@
 import React from "react";
 
-import * as THREE from "three";
+// assets
+import tireModel from "../../assets/models/default_tire.glb";
 
 // components
 import { Canvas } from "react-three-fiber";
-import Controls from "../Controls";
-import Plane from "../Plane";
-import Fog from "../Fog";
-import Box from "../Box";
+import Scene from "../Scene";
+import Model from "../Model";
 
 const Studio = () => {
   return (
-    <Canvas
-      camera={{ position: [0, 0, 5] }}
-      shadowMap
-    >
-      <ambientLight intensity={0.1} />
-      <pointLight position={[15, 20, 5]} castShadow shadowMapWidth={2048} shadowMapHeight={2048}/>
+    <Canvas camera={{ position: [0, 0, 5] }} shadowMap>
+      <Scene>
+        <Model
+          url={tireModel}
+          position={[0, 1, 0]}
+          scale={[0.05, 0.05, 0.05]}
+          castShadow
+        />
 
-      {/* start fog */}
-      <Fog />
-      {/* end fog */}
-
-      <Box />
-
-      {/* start plane */}
-      <Plane />
-      {/* end plane */}
-
-      {/* start controls */}
-      <Controls />
-      {/* end controls */}
+        <Model
+          url={tireModel}
+          position={[0, 0, 0]}
+          scale={[0.05, 0.05, 0.05]}
+          castShadow
+        />
+      </Scene>
     </Canvas>
   );
 };
