@@ -1,5 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
 
+// assets
+import deathTireModel from "./assets/models/death_tire.glb";
+import defaultTireModel from "./assets/models/default_tire.glb";
+
 // components
 import Studio from "./components/Studio";
 import Box from "@material-ui/core/Box";
@@ -12,25 +16,27 @@ import DoorIcon from "@material-ui/icons/MeetingRoomOutlined";
 import LightIcon from "@material-ui/icons/EmojiObjectsOutlined";
 
 const App = () => {
-  const [studioSize, setStudioSize] = useState(null);
+  const [tire, setTire] = useState(0);
 
   const containerRef = useRef();
 
-  useEffect(() => {
-    const container = containerRef.current;
-    setStudioSize({ width: container.offsetWidth, height: container.offsetHeight });
-  }, []);
+  const getTire = () => {
+    switch (tire) {
+      case 0:
+        return defaultTireModel;
+      case 1:
+        return deathTireModel;
+      default:
+        return defaultTireModel;
+    }
+  };
+
   return (
-    <Box width="100%" height="100%" style={{backgroundColor: "#fff"}}>
+    <Box width="100%" height="100%" style={{ backgroundColor: "#fff" }}>
       <CssBaseline />
       <Box display="flex" flexDirection="column" width="100%" height="100%">
         <Box height={450} ref={containerRef}>
-          {!!studioSize && (
-            <Studio
-              width={studioSize.width}
-              height={studioSize.height}
-            />
-          )}
+          <Studio tire={getTire()} />
         </Box>
 
         <Box
@@ -52,6 +58,7 @@ const App = () => {
                 variant="contained"
                 color="secondary"
                 style={{ width: 200 }}
+                onClick={() => setTire(0)}
               >
                 default tires
               </Button>
@@ -61,6 +68,7 @@ const App = () => {
                 variant="contained"
                 color="secondary"
                 style={{ width: 200 }}
+                onClick={() => setTire(1)}
               >
                 death tires
               </Button>

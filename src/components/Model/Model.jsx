@@ -20,7 +20,7 @@ const Model = ({ url, center, onLoad, ...rest }) => {
       setModel(scene);
       onLoad && onLoad(scene);
     });
-  }, []);
+  }, [url]);
 
   return model ? (
     <primitive

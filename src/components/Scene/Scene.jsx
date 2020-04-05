@@ -9,10 +9,10 @@ const defaultProps = {
   fog: {
     args: ["white", 15, 25]
   },
-  ambientLight: { intensity: 0.85 },
+  ambientLight: { intensity: 0.5 },
   pointLight: {
-    intensity: 0.25,
-    position: [10, 5, 5],
+    intensity: 0.5,
+    position: [0, 5, 0],
     castShadow: true,
     shadowMapWidth: 2048,
     shadowMapHeight: 2048
