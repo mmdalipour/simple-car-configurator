@@ -17,6 +17,7 @@ import LightIcon from "@material-ui/icons/EmojiObjectsOutlined";
 
 const App = () => {
   const [tire, setTire] = useState(0);
+  const [turnLights, setTurnLights] = useState(false);
 
   const containerRef = useRef();
 
@@ -36,7 +37,7 @@ const App = () => {
       <CssBaseline />
       <Box display="flex" flexDirection="column" width="100%" height="100%">
         <Box height={450} ref={containerRef}>
-          <Studio tire={getTire()} />
+          <Studio tire={getTire()} turnOnLights={turnLights}/>
         </Box>
 
         <Box
@@ -108,6 +109,7 @@ const App = () => {
                 variant="contained"
                 color="secondary"
                 style={{ width: 200 }}
+                onClick={() => setTurnLights(true)}
               >
                 turn on lights
               </Button>
@@ -117,6 +119,7 @@ const App = () => {
                 variant="contained"
                 color="secondary"
                 style={{ width: 200 }}
+                onClick={() => setTurnLights(false)}
               >
                 turn off lights
               </Button>

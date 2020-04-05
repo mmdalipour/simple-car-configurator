@@ -42,7 +42,7 @@ const Scene = ({
 
       {/* start light */}
       <ambientLight {...ambientLight} />
-      <pointLight {...pointLight} castShadow />
+      {/* <pointLight {...pointLight} castShadow /> */}
       {/* end light */}
 
       <Suspense fallback={fallback}>{children}</Suspense>
@@ -50,10 +50,6 @@ const Scene = ({
       {/* start plane */}
       <Plane {...plane} />
       {/* end plane */}
-
-      {/* start controls */}
-      <Controls />
-      {/* end controls */}
     </Fragment>
   );
 };
