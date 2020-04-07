@@ -8,7 +8,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 extend({ OrbitControls });
 
-const OrbitCamera = ({ ...rest }) => {
+const OrbitCamera = ({ active, ...rest }) => {
   const {
     gl,
     size: { width, height },
@@ -23,13 +23,17 @@ const OrbitCamera = ({ ...rest }) => {
     controlsRef.current && controlsRef.current.update();
   });
 
-  useEffect(() => void setDefaultCamera(cameraRef.current), []);
+  useEffect(() => {
+    if (!active) return;
+
+    setDefaultCamera(cameraRef.current);
+  }, [active]);
 
   return (
     <Fragment>
       <perspectiveCamera
         ref={cameraRef}
-        fov={75}
+        fov={45}
         near={0.1}
         far={1000}
         aspect={width / height}
