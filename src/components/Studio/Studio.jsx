@@ -10,11 +10,11 @@ import Car from "../Car";
 import OrbitCamera from "../OrbitCamera";
 import FreeLookCamera from "../FreeLookCamera";
 
-const Studio = ({ activeCamera, tire, turnOnLights }) => {
+const Studio = ({ activeCamera, openDoors, tire, turnOnLights }) => {
   const [cameras, setCameras] = useState();
 
-  const handleCarLoad = (model, tires, lights, cameras) => {
-    setCameras(cameras);
+  const handleCarLoad = (model, placeholders) => {
+    setCameras(placeholders.cameras);
   };
 
   return (
@@ -26,6 +26,7 @@ const Studio = ({ activeCamera, tire, turnOnLights }) => {
           position={[0, 0.2, 0]}
           turnOnLights={turnOnLights}
           onLoad={handleCarLoad}
+          openDoors={openDoors}
         />
         {cameras &&
           cameras.map((camera, index) => {
@@ -41,7 +42,7 @@ const Studio = ({ activeCamera, tire, turnOnLights }) => {
               />
             );
           })}
-        <OrbitCamera active={activeCamera === 0} />
+        <OrbitCamera position={[5,2,-5]} active={activeCamera === 0} />
       </Scene>
     </Canvas>
   );

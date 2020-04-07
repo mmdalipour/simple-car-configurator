@@ -17,8 +17,9 @@ const Model = ({ url, center, onLoad, ...rest }) => {
       scene.traverse(node => {
         node.castShadow = true;
       });
+
       setModel(scene);
-      onLoad && onLoad(scene);
+      onLoad && onLoad(model);
     });
   }, [url]);
 

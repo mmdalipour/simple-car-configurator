@@ -20,6 +20,7 @@ const App = () => {
   const [tire, setTire] = useState(0);
   const [turnLights, setTurnLights] = useState(false);
   const [activeCamera, setActiveCamera] = useState(0);
+  const [openDoors, setOpenDoors] = useState(false);
 
   const containerRef = useRef();
 
@@ -39,7 +40,12 @@ const App = () => {
       <CssBaseline />
       <Box display="flex" flexDirection="column" width="100%" height="100%">
         <Box height={450} ref={containerRef}>
-          <Studio activeCamera={activeCamera} tire={getTire()} turnOnLights={turnLights}/>
+          <Studio
+            activeCamera={activeCamera}
+            tire={getTire()}
+            turnOnLights={turnLights}
+            openDoors={openDoors}
+          />
         </Box>
 
         <Box
@@ -87,6 +93,7 @@ const App = () => {
                 variant="contained"
                 color="secondary"
                 style={{ width: 200 }}
+                onClick={() => setOpenDoors(true)}
               >
                 open doors
               </Button>
@@ -96,6 +103,7 @@ const App = () => {
                 variant="contained"
                 color="secondary"
                 style={{ width: 200 }}
+                onClick={() => setOpenDoors(false)}
               >
                 close doors
               </Button>
@@ -149,7 +157,7 @@ const App = () => {
                 style={{ width: 200 }}
                 onClick={() => setActiveCamera(1)}
               >
-               camera 1
+                camera 1
               </Button>
             </Box>
 
@@ -160,7 +168,7 @@ const App = () => {
                 style={{ width: 200 }}
                 onClick={() => setActiveCamera(2)}
               >
-               camera 2
+                camera 2
               </Button>
             </Box>
           </Box>

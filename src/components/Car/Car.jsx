@@ -2,26 +2,30 @@ import React, { useState, useEffect } from "react";
 
 // assets
 import carModel from "../../assets/models/car.glb";
-import tireModel from "../../assets/models/default_tire.glb";
-import deathTireModel from "../../assets/models/death_tire.glb";
 
-// react-spring
-import { useSpring, a } from "react-spring/three";
+// react-three-fiber
+import { useFrame } from "react-three-fiber";
+
+// three js
+import { AnimationClip, AnimationMixer, LoopOnce } from "three";
 
 // components
 import Model from "../Model";
-import { useFrame } from "react-three-fiber";
 
 const tireNames = ["tire_br", "tire_bl", "tire_fr", "tire_fl"];
 const lightNames = ["light_br", "light_bl", "light_fr", "light_fl"];
 const cameraNames = ["camera_0", "camera_1"];
+const doorNames = ["door_l", "door_r"];
 
 let brightness = 0;
+let mixer;
 
-const Car = ({ tire, turnOnLights, onLoad, ...rest }) => {
+const Car = ({ tire, turnOnLights, openDoors, onLoad, ...rest }) => {
+  const [model, setModel] = useState();
   const [tirePlaceholders, setTirePlaceholders] = useState();
   const [lightPlaceholders, setLightPlaceholders] = useState();
   const [cameraPlaceholders, setCameraPlaceholders] = useState();
+  const [doorPlaceholders, setDoorPlaceholders] = useState();
 
   // searchs through model nodes and returns light placeholders
   const getLights = async (model) => {
@@ -56,21 +60,15 @@ const Car = ({ tire, turnOnLights, onLoad, ...rest }) => {
     return cameras;
   };
 
-  // on car model loaded
-  const handleCarLoad = async (model) => {
-    // get all tire placeholders
-    const loadedTires = await getTires(model);
-    setTirePlaceholders(loadedTires);
+  // searchs throgh model nodes and returns door placeholders
+  const getDoors = async (model) => {
+    let doors = [];
+    doorNames.forEach((name) => {
+      const doorObject = model.getObjectByName(name);
+      doors.push(doorObject);
+    });
 
-    // get all light placeholders
-    const loadedLights = await getLights(model);
-    setLightPlaceholders(loadedLights);
-
-    // get all camera placeholders
-    const loadedCameras = await getCameras(model);
-    setCameraPlaceholders(loadedCameras);
-
-    onLoad && onLoad(model, loadedTires, loadedLights, loadedCameras);
+    return doors;
   };
 
   // gets model url and renders it on car tire placeholders
@@ -89,18 +87,15 @@ const Car = ({ tire, turnOnLights, onLoad, ...rest }) => {
     });
   };
 
-  const renderLights = () => {
-    return lightPlaceholders.map((placeholder, index) => {
-      const isFrontLight = placeholder.name.includes("f");
-      const rotation = isFrontLight ? [0, 0, 0] : [Math.PI, 0, 0];
+  const openCarDoors = (open) => {
+    if (!model) return;
 
-      return (
-        <spotLight
-          position={placeholder.position}
-          args={["white"]}
-          intensity={1}
-        />
-      );
+    model.animations.forEach((clip) => {
+      const action = mixer.clipAction(clip);
+      action.setLoop(LoopOnce);
+      action.clampWhenFinished = true;
+      action.timeScale = open ? 1 : -1;
+      action.play();
     });
   };
 
@@ -109,6 +104,41 @@ const Car = ({ tire, turnOnLights, onLoad, ...rest }) => {
       lightPlaceholders.forEach((l) => {
         l.material.emissive.setRGB(value, value, value);
       });
+  };
+
+  // on car model loaded
+  const handleCarLoad = async (model) => {
+    const scene = model.scene;
+
+    setModel(model);
+
+    // intial mixer
+    mixer = new AnimationMixer(model.scene);
+
+    // get all tire placeholders
+    const loadedTires = await getTires(scene);
+    setTirePlaceholders(loadedTires);
+
+    // get all light placeholders
+    const loadedLights = await getLights(scene);
+    setLightPlaceholders(loadedLights);
+
+    // get all camera placeholders
+    const loadedCameras = await getCameras(scene);
+    setCameraPlaceholders(loadedCameras);
+
+    // get all door placeholders
+    const loadedDoors = await getDoors(scene);
+    setDoorPlaceholders(loadedDoors);
+
+    const placeholders = {
+      tires: loadedTires,
+      lights: loadedLights,
+      cameras: loadedCameras,
+      doors: loadedDoors,
+    };
+
+    onLoad && onLoad(scene, placeholders);
   };
 
   useFrame(({ clock }) => {
@@ -131,7 +161,13 @@ const Car = ({ tire, turnOnLights, onLoad, ...rest }) => {
         brightness = 0;
       }
     }
+
+    mixer && mixer.update(deltaTime);
   });
+
+  useEffect(() => {
+    openCarDoors(openDoors);
+  }, [openDoors, model])
 
   return (
     <group {...rest}>
