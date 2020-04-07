@@ -14,10 +14,12 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import TireIcon from "@material-ui/icons/LensOutlined";
 import DoorIcon from "@material-ui/icons/MeetingRoomOutlined";
 import LightIcon from "@material-ui/icons/EmojiObjectsOutlined";
+import CameraIcon from "@material-ui/icons/CameraOutlined";
 
 const App = () => {
   const [tire, setTire] = useState(0);
   const [turnLights, setTurnLights] = useState(false);
+  const [activeCamera, setActiveCamera] = useState(0);
 
   const containerRef = useRef();
 
@@ -37,7 +39,7 @@ const App = () => {
       <CssBaseline />
       <Box display="flex" flexDirection="column" width="100%" height="100%">
         <Box height={450} ref={containerRef}>
-          <Studio tire={getTire()} turnOnLights={turnLights}/>
+          <Studio activeCamera={activeCamera} tire={getTire()} turnOnLights={turnLights}/>
         </Box>
 
         <Box
@@ -122,6 +124,43 @@ const App = () => {
                 onClick={() => setTurnLights(false)}
               >
                 turn off lights
+              </Button>
+            </Box>
+          </Box>
+
+          <Box display="flex" alignItems="center" width="100%">
+            <Box flexGrow={1}>
+              <CameraIcon color="secondary" />
+            </Box>
+            <Box padding={1}>
+              <Button
+                variant="contained"
+                color="secondary"
+                style={{ width: 200 }}
+                onClick={() => setActiveCamera(0)}
+              >
+                main camera
+              </Button>
+            </Box>
+            <Box padding={1}>
+              <Button
+                variant="contained"
+                color="secondary"
+                style={{ width: 200 }}
+                onClick={() => setActiveCamera(1)}
+              >
+               camera 1
+              </Button>
+            </Box>
+
+            <Box padding={1}>
+              <Button
+                variant="contained"
+                color="secondary"
+                style={{ width: 200 }}
+                onClick={() => setActiveCamera(2)}
+              >
+               camera 2
               </Button>
             </Box>
           </Box>

@@ -42,7 +42,7 @@ const Scene = ({
 
       {/* start light */}
       <ambientLight {...ambientLight} />
-      {/* <pointLight {...pointLight} castShadow /> */}
+      <pointLight {...pointLight} castShadow />
       {/* end light */}
 
       <Suspense fallback={fallback}>{children}</Suspense>

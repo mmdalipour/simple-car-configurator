@@ -18,13 +18,10 @@ const cameraNames = ["camera_0", "camera_1"];
 
 let brightness = 0;
 
-const Car = ({ tire, turnOnLights, ...rest }) => {
+const Car = ({ tire, turnOnLights, onLoad, ...rest }) => {
   const [tirePlaceholders, setTirePlaceholders] = useState();
   const [lightPlaceholders, setLightPlaceholders] = useState();
-
-  const animatedProps = useSpring({
-    light: turnOnLights ? 1 : 0,
-  });
+  const [cameraPlaceholders, setCameraPlaceholders] = useState();
 
   // searchs through model nodes and returns light placeholders
   const getLights = async (model) => {
@@ -48,16 +45,32 @@ const Car = ({ tire, turnOnLights, ...rest }) => {
     return tires;
   };
 
+  // searchs through model nodes and returns tire placeholders
+  const getCameras = async (model) => {
+    let cameras = [];
+    cameraNames.forEach((name) => {
+      const cameraObject = model.getObjectByName(name);
+      cameras.push(cameraObject);
+    });
+
+    return cameras;
+  };
+
   // on car model loaded
   const handleCarLoad = async (model) => {
     // get all tire placeholders
-    if (tire) {
-      const loadedTires = await getTires(model);
-      setTirePlaceholders(loadedTires);
-    }
+    const loadedTires = await getTires(model);
+    setTirePlaceholders(loadedTires);
 
+    // get all light placeholders
     const loadedLights = await getLights(model);
     setLightPlaceholders(loadedLights);
+
+    // get all camera placeholders
+    const loadedCameras = await getCameras(model);
+    setCameraPlaceholders(loadedCameras);
+
+    onLoad && onLoad(model, loadedTires, loadedLights, loadedCameras);
   };
 
   // gets model url and renders it on car tire placeholders
@@ -101,7 +114,7 @@ const Car = ({ tire, turnOnLights, ...rest }) => {
   useFrame(({ clock }) => {
     // get delta time
     const deltaTime = clock.getDelta() * 1000;
-    
+
     // if turn on light each frame add to the brightness else decrease it
     if (turnOnLights) {
       if (brightness < 1) {
@@ -124,18 +137,6 @@ const Car = ({ tire, turnOnLights, ...rest }) => {
     <group {...rest}>
       <Model url={carModel} onLoad={handleCarLoad} />
       {tirePlaceholders && renderTires(tire)}
-      {lightPlaceholders && (
-        <spotLight
-          args={["white"]}
-          distance={10}
-          angle={Math.PI / 4}
-          penumbra={1}
-          intensity={0.5}
-          position={[0, 1, 0]}
-          isSpotLight
-          target={lightPlaceholders[0]}
-        />
-      )}
     </group>
   );
 };

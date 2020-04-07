@@ -65,7 +65,7 @@ const FreeLookCamera = ({ active, ...rest }) => {
     // only support one finger touch
     if (event.touches.length !== 1) return;
 
-    const deltaTime = clock.getDelta() * 100;
+    const deltaTime = clock.getDelta() * 1000;
 
     const touch = event.touches[0];
 
@@ -77,10 +77,9 @@ const FreeLookCamera = ({ active, ...rest }) => {
     const deltaY = startPointer.pageY - y;
 
     // touch speed
-    const touchAxisX = deltaX / (deltaTime * 10);
-    const touchAxisY = deltaY / (deltaTime * 10);
+    const touchAxisX = (deltaX / (deltaTime * 10)) * (width / height);
+    const touchAxisY = (deltaY / (deltaTime * 10)) * (width / height);
 
-    // set look angle to mouse x position times speed
     lookAngle += touchAxisX * rotationSpeed;
 
     lookAngle = clamp(
@@ -89,17 +88,12 @@ const FreeLookCamera = ({ active, ...rest }) => {
       degToRad(maxLookAngle)
     );
 
-    // Rotate the rig (the root object) around Y axis only:
     rigTargetRotation = new Quaternion(0.0, lookAngle, 0.0, 0.0);
-    console.error(radToDeg(rigTargetRotation.y));
 
-    // on platforms with a mouse, we adjust the current angle based on Y mouse input and turn speed
     tiltAngle += touchAxisY * rotationSpeed;
 
-    // and make sure the new value is within the tilt range
     tiltAngle = clamp(tiltAngle, degToRad(minTilt), degToRad(maxTilt));
 
-    // Tilt input around X is applied to the pivot (the child of this object)
     pivotTargetRotation = new Quaternion(
       tiltAngle,
       pivotEuler.y,
@@ -140,7 +134,7 @@ const FreeLookCamera = ({ active, ...rest }) => {
   };
 
   const onMouseMove = (event) => {
-    const deltaTime = clock.getDelta() * 10000;
+    const deltaTime = clock.getDelta() * 1000;
 
     const x = event.clientX;
     const y = event.clientY;
@@ -149,10 +143,9 @@ const FreeLookCamera = ({ active, ...rest }) => {
     const deltaY = startPointer.clientY - y;
 
     // mouse speed
-    const mouseAxisX = deltaX / deltaTime;
-    const mouseAxisY = deltaY / deltaTime;
+    const mouseAxisX = deltaX / (deltaTime * 10);
+    const mouseAxisY = deltaY / (deltaTime * 10);
 
-    // set look angle to mouse x position times speed
     lookAngle += mouseAxisX * rotationSpeed;
 
     lookAngle = clamp(
@@ -161,17 +154,18 @@ const FreeLookCamera = ({ active, ...rest }) => {
       degToRad(maxLookAngle)
     );
 
-    // Rotate the rig (the root object) around Y axis only:
-    rigTargetRotation = new Vector3(0.0, lookAngle, 0.0);
+    rigTargetRotation = new Quaternion(0.0, lookAngle, 0.0, 0.0);
 
-    // on platforms with a mouse, we adjust the current angle based on Y mouse input and turn speed
     tiltAngle += mouseAxisY * rotationSpeed;
 
-    // and make sure the new value is within the tilt range
     tiltAngle = clamp(tiltAngle, degToRad(minTilt), degToRad(maxTilt));
 
-    // Tilt input around X is applied to the pivot (the child of this object)
-    pivotTargetRotation = new Vector3(tiltAngle, pivotEuler.y, pivotEuler.z);
+    pivotTargetRotation = new Quaternion(
+      tiltAngle,
+      pivotEuler.y,
+      pivotEuler.z,
+      0.0
+    );
 
     const pivot = pivotRef.current;
     const rig = rigRef.current;
@@ -217,6 +211,7 @@ const FreeLookCamera = ({ active, ...rest }) => {
     rigTargetRotation = rig.rotation;
 
     lookAngle = rigTargetRotation.y;
+    tiltAngle = pivotTargetRotation.x;
 
     const scope = gl;
 
@@ -243,7 +238,7 @@ const FreeLookCamera = ({ active, ...rest }) => {
   }, [active]);
 
   return (
-    <group ref={rigRef} position={[0, 1, 2]}>
+    <group ref={rigRef} {...rest}>
       <group ref={pivotRef}>
         <perspectiveCamera
           ref={cameraRef}
@@ -251,7 +246,6 @@ const FreeLookCamera = ({ active, ...rest }) => {
           near={0.1}
           far={1000}
           aspect={width / height}
-          {...rest}
         />
       </group>
     </group>
