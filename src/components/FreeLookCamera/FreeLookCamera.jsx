@@ -136,17 +136,15 @@ const FreeLookCamera = ({ active, ...rest }) => {
   const onMouseMove = (event) => {
     const deltaTime = clock.getDelta() * 1000;
 
-    const x = event.clientX;
-    const y = event.clientY;
 
-    const deltaX = startPointer.clientX - x;
-    const deltaY = startPointer.clientY - y;
+    const deltaX = event.movementX * deltaTime * 0.1;
+    const deltaY = event.movementY * deltaTime * 0.1;
 
     // mouse speed
     const mouseAxisX = deltaX / (deltaTime * 10);
     const mouseAxisY = deltaY / (deltaTime * 10);
 
-    lookAngle += mouseAxisX * rotationSpeed;
+    lookAngle -= mouseAxisX * rotationSpeed;
 
     lookAngle = clamp(
       lookAngle,

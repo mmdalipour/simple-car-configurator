@@ -11,6 +11,7 @@ import { AnimationClip, AnimationMixer, LoopOnce } from "three";
 
 // components
 import Model from "../Model";
+import { clamp } from "../../utils";
 
 const tireNames = ["tire_br", "tire_bl", "tire_fr", "tire_fl"];
 const lightNames = ["light_br", "light_bl", "light_fr", "light_fl"];
@@ -19,6 +20,7 @@ const doorNames = ["door_l", "door_r"];
 
 let brightness = 0;
 let mixer;
+let actionState = 0;
 
 const Car = ({ tire, turnOnLights, openDoors, onLoad, ...rest }) => {
   const [model, setModel] = useState();
@@ -26,6 +28,7 @@ const Car = ({ tire, turnOnLights, openDoors, onLoad, ...rest }) => {
   const [lightPlaceholders, setLightPlaceholders] = useState();
   const [cameraPlaceholders, setCameraPlaceholders] = useState();
   const [doorPlaceholders, setDoorPlaceholders] = useState();
+  const [actions, setActions] = useState();
 
   // searchs through model nodes and returns light placeholders
   const getLights = async (model) => {
@@ -87,15 +90,26 @@ const Car = ({ tire, turnOnLights, openDoors, onLoad, ...rest }) => {
     });
   };
 
-  const openCarDoors = (open) => {
+  const setUpActions = () => {
     if (!model) return;
+
+    let actions = [];
 
     model.animations.forEach((clip) => {
       const action = mixer.clipAction(clip);
-      action.setLoop(LoopOnce);
-      action.clampWhenFinished = true;
-      action.timeScale = open ? 1 : -1;
+      action.timeScale = 0;
       action.play();
+      actions.push(action);
+    });
+
+    setActions(actions);
+  };
+
+  const openCarDoors = (time) => {
+    if (!actions) return;
+
+    actions.forEach((action) => {
+      action.time = time;
     });
   };
 
@@ -162,12 +176,28 @@ const Car = ({ tire, turnOnLights, openDoors, onLoad, ...rest }) => {
       }
     }
 
+    if (openDoors) {
+      if (actionState < 1) {
+        actionState += deltaTime * 1.5;
+        openCarDoors(actionState);
+      } else {
+        actionState = 1;
+      }
+    } else {
+      if (actionState > 0) {
+        actionState -= deltaTime * 1.5;
+        openCarDoors(actionState);
+      } else {
+        actionState = 0;
+      }
+    }
+
     mixer && mixer.update(deltaTime);
   });
 
   useEffect(() => {
-    openCarDoors(openDoors);
-  }, [openDoors, model])
+    setUpActions();
+  }, [model]);
 
   return (
     <group {...rest}>
