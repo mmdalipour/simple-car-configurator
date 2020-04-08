@@ -127,8 +127,6 @@ const FreeLookCamera = ({ active, ...rest }) => {
   const onMouseDown = (event) => {
     event.preventDefault();
 
-    startPointer = event;
-
     document.addEventListener("mousemove", onMouseMove, false);
     document.addEventListener("mouseup", onMouseUp, false);
   };
