@@ -7,11 +7,10 @@ import carModel from "../../assets/models/car.glb";
 import { useFrame } from "react-three-fiber";
 
 // three js
-import { AnimationClip, AnimationMixer, LoopOnce } from "three";
+import { AnimationMixer } from "three";
 
 // components
 import Model from "../Model";
-import { clamp } from "../../utils";
 
 const tireNames = ["tire_br", "tire_bl", "tire_fr", "tire_fl"];
 const lightNames = ["light_br", "light_bl", "light_fr", "light_fl"];

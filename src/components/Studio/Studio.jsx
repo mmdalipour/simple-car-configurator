@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTheme } from "@material-ui/core/styles";
 
 // hooks
 import { useFrame } from "react-three-fiber";
@@ -13,13 +14,15 @@ import FreeLookCamera from "../FreeLookCamera";
 const Studio = ({ activeCamera, openDoors, tire, turnOnLights }) => {
   const [cameras, setCameras] = useState();
 
+  const theme = useTheme();
+
   const handleCarLoad = (model, placeholders) => {
     setCameras(placeholders.cameras);
   };
 
   return (
     <Canvas camera={{ position: [0, 0, 5] }} shadowMap>
-      <Scene>
+      <Scene plane={{ color: theme.palette.secondary.main }}>
         <Car
           scale={[4, 4, 4]}
           tire={tire}
@@ -42,7 +45,7 @@ const Studio = ({ activeCamera, openDoors, tire, turnOnLights }) => {
               />
             );
           })}
-        <OrbitCamera position={[5,2,-5]} active={activeCamera === 0} />
+        <OrbitCamera position={[5, 2, -5]} active={activeCamera === 0} />
       </Scene>
     </Canvas>
   );

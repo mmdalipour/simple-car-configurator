@@ -1,4 +1,5 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
+import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 // assets
 import deathTireModel from "./assets/models/death_tire.glb";
@@ -8,13 +9,25 @@ import defaultTireModel from "./assets/models/default_tire.glb";
 import Studio from "./components/Studio";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 // icons
-import TireIcon from "@material-ui/icons/LensOutlined";
-import DoorIcon from "@material-ui/icons/MeetingRoomOutlined";
-import LightIcon from "@material-ui/icons/EmojiObjectsOutlined";
-import CameraIcon from "@material-ui/icons/CameraOutlined";
+import GitHubIcon from "@material-ui/icons/GitHub";
+
+// theme
+const theme = createMuiTheme({
+  palette: {
+    type: "dark",
+
+    background: {
+      default: "#1B1C1E",
+    },
+  },
+  shape: {
+    borderRadius: 35,
+  },
+});
 
 const App = () => {
   const [tire, setTire] = useState(0);
@@ -36,145 +49,165 @@ const App = () => {
   };
 
   return (
-    <Box width="100%" height="100%" style={{ backgroundColor: "#fff" }}>
-      <CssBaseline />
-      <Box display="flex" flexDirection="column" width="100%" height="100%">
-        <Box height={450} ref={containerRef}>
-          <Studio
-            activeCamera={activeCamera}
-            tire={getTire()}
-            turnOnLights={turnLights}
-            openDoors={openDoors}
-          />
-        </Box>
-
-        <Box
-          alignItems="center"
-          display="flex"
-          justifyContent="space-between"
-          overflow="auto"
-          flexDirection="column"
-          flexGrow={1}
-          width="100%"
-          padding={2}
-        >
-          <Box display="flex" alignItems="center" width="100%">
-            <Box flexGrow={1}>
-              <TireIcon color="secondary" />
-            </Box>
-            <Box padding={1}>
-              <Button
-                variant="contained"
-                color="secondary"
-                style={{ width: 200 }}
-                onClick={() => setTire(0)}
-              >
-                default tires
-              </Button>
-            </Box>
-            <Box padding={1}>
-              <Button
-                variant="contained"
-                color="secondary"
-                style={{ width: 200 }}
-                onClick={() => setTire(1)}
-              >
-                death tires
-              </Button>
-            </Box>
+    <ThemeProvider theme={theme}>
+      <Box width="100%" height="100%">
+        <CssBaseline />
+        <Box display="flex" flexDirection="column" width="100%" height="100%">
+          <Box height={450} ref={containerRef}>
+            <Studio
+              activeCamera={activeCamera}
+              tire={getTire()}
+              turnOnLights={turnLights}
+              openDoors={openDoors}
+            />
           </Box>
 
-          <Box display="flex" alignItems="center" width="100%">
-            <Box flexGrow={1}>
-              <DoorIcon color="secondary" />
-            </Box>
-            <Box padding={1}>
+          <Box width="100%" height="100%" display="flex" padding={2}>
+            <Box flex={1} display="flex" alignItems="flex-end">
               <Button
-                variant="contained"
+                component="a"
+                href="https://github.com/mmdalipour"
+                target="_blank"
                 color="secondary"
-                style={{ width: 200 }}
-                onClick={() => setOpenDoors(true)}
+                startIcon={<GitHubIcon color="secondary" />}
               >
-                open doors
+                checkout my github
               </Button>
             </Box>
-            <Box padding={1}>
-              <Button
-                variant="contained"
-                color="secondary"
-                style={{ width: 200 }}
-                onClick={() => setOpenDoors(false)}
+            <Box
+              alignItems="center"
+              display="flex"
+              justifyContent="space-between"
+              overflow="auto"
+              flexDirection="column"
+            >
+              <Box
+                display="flex"
+                justifyContent="flex-end"
+                alignItems="center"
+                width="100%"
               >
-                close doors
-              </Button>
-            </Box>
-          </Box>
+                <Box padding={1}>
+                  <Button
+                    variant={tire === 0 ? "contained" : "outlined"}
+                    color="secondary"
+                    style={{ width: 200 }}
+                    onClick={() => setTire(0)}
+                  >
+                    default tires
+                  </Button>
+                </Box>
+                <Box padding={1}>
+                  <Button
+                    variant={tire === 1 ? "contained" : "outlined"}
+                    color="secondary"
+                    style={{ width: 200 }}
+                    onClick={() => setTire(1)}
+                  >
+                    death tires
+                  </Button>
+                </Box>
+              </Box>
 
-          <Box display="flex" alignItems="center" width="100%">
-            <Box flexGrow={1}>
-              <LightIcon color="secondary" />
-            </Box>
-            <Box padding={1}>
-              <Button
-                variant="contained"
-                color="secondary"
-                style={{ width: 200 }}
-                onClick={() => setTurnLights(true)}
+              <Box
+                display="flex"
+                justifyContent="flex-end"
+                alignItems="center"
+                width="100%"
               >
-                turn on lights
-              </Button>
-            </Box>
-            <Box padding={1}>
-              <Button
-                variant="contained"
-                color="secondary"
-                style={{ width: 200 }}
-                onClick={() => setTurnLights(false)}
-              >
-                turn off lights
-              </Button>
-            </Box>
-          </Box>
+                <Box padding={1}>
+                  <Button
+                    variant={openDoors ? "contained" : "outlined"}
+                    color="secondary"
+                    style={{ width: 200 }}
+                    onClick={() => setOpenDoors(true)}
+                  >
+                    doors opened
+                  </Button>
+                </Box>
+                <Box padding={1}>
+                  <Button
+                    variant={!openDoors ? "contained" : "outlined"}
+                    color="secondary"
+                    style={{ width: 200 }}
+                    onClick={() => setOpenDoors(false)}
+                  >
+                    doors closed
+                  </Button>
+                </Box>
+              </Box>
 
-          <Box display="flex" alignItems="center" width="100%">
-            <Box flexGrow={1}>
-              <CameraIcon color="secondary" />
-            </Box>
-            <Box padding={1}>
-              <Button
-                variant="contained"
-                color="secondary"
-                style={{ width: 200 }}
-                onClick={() => setActiveCamera(0)}
+              <Box
+                display="flex"
+                justifyContent="flex-end"
+                alignItems="center"
+                width="100%"
               >
-                main camera
-              </Button>
-            </Box>
-            <Box padding={1}>
-              <Button
-                variant="contained"
-                color="secondary"
-                style={{ width: 200 }}
-                onClick={() => setActiveCamera(1)}
-              >
-                camera 1
-              </Button>
-            </Box>
+                <Box padding={1}>
+                  <Button
+                    variant={turnLights ? "contained" : "outlined"}
+                    color="secondary"
+                    style={{ width: 200 }}
+                    onClick={() => setTurnLights(true)}
+                  >
+                    lights on
+                  </Button>
+                </Box>
+                <Box padding={1}>
+                  <Button
+                    variant={!turnLights ? "contained" : "outlined"}
+                    color="secondary"
+                    style={{ width: 200 }}
+                    onClick={() => setTurnLights(false)}
+                  >
+                    lights off
+                  </Button>
+                </Box>
+              </Box>
 
-            <Box padding={1}>
-              <Button
-                variant="contained"
-                color="secondary"
-                style={{ width: 200 }}
-                onClick={() => setActiveCamera(2)}
+              <Box
+                display="flex"
+                justifyContent="flex-end"
+                alignItems="center"
+                width="100%"
               >
-                camera 2
-              </Button>
+                <Box padding={1}>
+                  <Button
+                    variant={activeCamera === 0 ? "contained" : "outlined"}
+                    color="secondary"
+                    style={{ width: 200 }}
+                    onClick={() => setActiveCamera(0)}
+                  >
+                    main camera
+                  </Button>
+                </Box>
+                <Box padding={1}>
+                  <Button
+                    variant={activeCamera === 1 ? "contained" : "outlined"}
+                    color="secondary"
+                    style={{ width: 200 }}
+                    onClick={() => setActiveCamera(1)}
+                  >
+                    camera 1
+                  </Button>
+                </Box>
+
+                <Box padding={1}>
+                  <Button
+                    variant={activeCamera === 2 ? "contained" : "outlined"}
+                    color="secondary"
+                    style={{ width: 200 }}
+                    onClick={() => setActiveCamera(2)}
+                  >
+                    camera 2
+                  </Button>
+                </Box>
+              </Box>
             </Box>
           </Box>
         </Box>
       </Box>
-    </Box>
+    </ThemeProvider>
   );
 };
 

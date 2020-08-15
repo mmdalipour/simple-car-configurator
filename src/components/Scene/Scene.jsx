@@ -2,53 +2,54 @@ import React, { Suspense, Fragment } from "react";
 
 // components
 import Plane from "../Plane";
-import Controls from "../Controls";
 
 const defaultProps = {
   fallback: null,
   fog: {
-    args: ["white", 15, 25]
+    args: ["white", 15, 25],
   },
   ambientLight: { intensity: 0.5 },
   pointLight: {
-    intensity: 0.5,
-    position: [0, 5, 0],
+    intensity: 0.35,
+    position: [4, 5, 0],
     castShadow: true,
     shadowMapWidth: 2048,
-    shadowMapHeight: 2048
+    shadowMapHeight: 2048,
   },
   plane: {
     width: 100,
     height: 100,
     color: "white",
     rotation: [-Math.PI / 2, 0, 0],
-    receiveShadow: true
-  }
+    receiveShadow: true,
+  },
 };
 
 const Scene = ({
   children,
-  fallback = defaultProps.fallback,
-  fog = defaultProps.fog,
-  ambientLight = defaultProps.ambientLight,
-  pointLight = defaultProps.pointLight,
-  plane = defaultProps.plane
+  fallback,
+  fog,
+  ambientLight,
+  pointLight,
+  plane,
 }) => {
   return (
     <Fragment>
       {/* start fog */}
-      <fog attach="fog" {...fog} />
+      {/* <fog attach="fog" {...defaultProps.fog} {...fog} /> */}
       {/* end fog */}
 
       {/* start light */}
-      <ambientLight {...ambientLight} />
-      <pointLight {...pointLight} castShadow />
+      <ambientLight {...defaultProps.ambientLight} {...ambientLight} />
+      <pointLight {...defaultProps.pointLight} {...pointLight} castShadow />
       {/* end light */}
 
-      <Suspense fallback={fallback}>{children}</Suspense>
+      <Suspense {...defaultProps.fallback} fallback={fallback}>
+        {children}
+      </Suspense>
 
       {/* start plane */}
-      <Plane {...plane} />
+      <Plane {...defaultProps.plane} {...plane} />
       {/* end plane */}
     </Fragment>
   );
